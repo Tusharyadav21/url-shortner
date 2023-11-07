@@ -7,7 +7,7 @@ const URL = require("./models/url");
 require("dotenv").config();
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8001;
 
 connectToDatabase().then(() => console.log("DB Connected"));
 
