@@ -17,7 +17,7 @@
 			<h1>URL Shortner</h1>
 			<% if (locals.id) { %>
 			<p>URL Generated:</p>
-			<a>http://localhost:8000/url/<%= id %></a>
+			<a href="/url/<%= id %>" target="_blank">https://url-short-8.vercel.app/url/<%= id %></a>
 			<% } %>
 			<div>
 				<form method="POST" action="/url" class="d-flex flex-column align-items-center mt-5 mb-5">
