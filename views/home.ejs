@@ -3,61 +3,139 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-			rel="stylesheet"
-			integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-			crossorigin="anonymous"
-		/>
-		<link rel="stylesheet" href="./styles.css" />
+		<script src="https://cdn.tailwindcss.com"></script>
 		<title>Home Page</title>
 	</head>
 	<body>
-		<div class="d-flex flex-column align-items-center">
-			<h1>URL Shortner</h1>
+		<nav class="bg-gray-800">
+			<div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+				<div class="relative flex h-16 items-center justify-between">
+					<div class="flex items-center pr-2 sm:hidden">
+						<div
+							class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
+						>
+							<svg
+								class="absolute w-12 h-12 text-gray-400 -left-1"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+									clip-rule="evenodd"
+								></path>
+							</svg>
+						</div>
+						<span class="text-white ml-2"><%= locals.userName %></span>
+					</div>
+					<div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+						<div class="flex flex-shrink-0 items-center">
+							<img
+								class="h-8 w-auto"
+								src="https://tailwindui.com/img/logos/mark.svg?color=emerald&shade=500"
+								alt="Your Company"
+							/>
+						</div>
+					</div>
+					<div
+						class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 hidden sm:flex"
+					>
+						<div
+							class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
+						>
+							<svg
+								class="absolute w-12 h-12 text-gray-400 -left-1"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+									clip-rule="evenodd"
+								></path>
+							</svg>
+						</div>
+						<span class="text-white ml-2"><%= locals.userName %></span>
+					</div>
+					<a href="/login" class="text-white ml-5">Logout</a>
+				</div>
+			</div>
+		</nav>
+		<div class="flex flex-col items-center">
+			<h1
+				class="text-2xl font-bold leading-7 mt-5 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight"
+			>
+				URL Shortner
+			</h1>
 			<% if (locals.id) { %>
 			<p>URL Generated:</p>
 			<a href="/url/<%= id %>" target="_blank">https://url-short-8.vercel.app/url/<%= id %></a>
 			<% } %>
 			<div>
-				<form method="POST" action="/url" class="d-flex flex-column align-items-center mt-5 mb-5">
-					<div class="form-group">
-						<label>Enter Your Original URL</label>
-						<input
-							type="text"
-							name="url"
-							placeholder="https://example.com"
-							class="form-control-sm"
-							aria-label="url input"
-						/>
+				<form method="POST" action="/url" class="mt-5 mb-5 w-full">
+					<div>
+						<label for="email" class="text-sm font-medium leading-6 text-gray-900"
+							>Enter Your URL</label
+						>
+						<div class="mt-2">
+							<input
+								type="text"
+								id="url"
+								name="url"
+								autocomplete="url"
+								required
+								class="pl-[12px] block min-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-emerald-600 dark:focus:ring-emerald-600 sm:text-sm sm:leading-6 m-auto"
+							/>
+						</div>
 					</div>
 					<div class="form-group mt-3">
-						<button type="submit" class="btn btn-outline-primary btn-sm">Generate</button>
+						<button
+							type="button"
+							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-emerald-600 dark:hover:bg-emerald-700 focus:outline-none dark:focus:ring-emerald-800"
+						>
+							Generate
+						</button>
 					</div>
 				</form>
 			</div>
+
 			<div>
 				<% if (locals.urls) { %>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th scope="col">#</th>
-							<th scope="col">Shortened URL</th>
-							<th scope="col">Redirected</th>
-							<th scope="col">Clicks</th>
-						</tr>
-					</thead>
-					<tbody>
-						<% urls.forEach((url , index) => { %>
-						<tr>
-							<th scope="row"><%= index + 1 %></td>
-							<td><a href="/url/<%= url.shortId %>"><%= url.shortId %></a></td>
-							<td><%= url.redirectedUrl %></td>
-							<td><%= url.visitHistory.length %></td>
-						</tr>
-						<% }) %>
-					</tbody>
-				</table>
+				<div class="relative overflow-x-auto m-5 outline outline-1 outline-offset-0">
+					<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+						<thead
+							class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+						>
+							<tr>
+								<th scope="col" class="px-6 py-3">#</th>
+								<th scope="col" class="px-6 py-3">Shortened URL</th>
+								<th scope="col" class="px-6 py-3">Redirected</th>
+								<th scope="col" class="px-6 py-3">Clicks</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% urls.forEach((url , index) => { %>
+							<tr class="bg-white border-b dark:bg-black-800 dark:border-gray-700">
+								<th
+									scope="row"
+									class="px-6 py-4 font-medium text-black whitespace-nowrap dark:text-black"
+								>
+									<%= index + 1 %>
+								</th>
+								<td class="px-6 py-4 text-black dark:text-black">
+									<a href="/url/<%= url.shortId %>"><%= url.shortId %></a>
+								</td>
+								<td class="px-6 py-4 text-black break-all max-w-md dark:text-black">
+									<%= url.redirectedUrl %>
+								</td>
+								<td class="px-6 py-4 text-black dark:text-black"><%= url.visitHistory.length %></td>
+							</tr>
+							<% }) %>
+						</tbody>
+					</table>
+				</div>
 				<% } %>
 			</div>
 		</div>

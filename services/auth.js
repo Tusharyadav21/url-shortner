@@ -6,7 +6,7 @@ const key = process.env.SECRET_KEY;
 
 function setUser(user) {
 	// sessionIdToUsermMap.set(id, user);
-	return jwt.sign({ _id: user.id, email: user.email, role: user.role }, key);
+	return jwt.sign({ _id: user.id, email: user.email, role: user.role, name: user.name }, key);
 }
 
 function getUser(token) {
