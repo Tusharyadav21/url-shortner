@@ -5,6 +5,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<script src="https://cdn.tailwindcss.com"></script>
 		<title>Home Page</title>
+		<script>
+			const clearCookies = () => {
+				document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+				window.location.href = "/";
+			};
+		</script>
 	</head>
 	<body>
 		<nav class="bg-gray-800">
@@ -59,7 +65,12 @@
 						</div>
 						<span class="text-white ml-2"><%= locals.userName %></span>
 					</div>
-					<a href="/login" class="text-white ml-5">Logout</a>
+					<input
+						type="button"
+						value="Logout"
+						onClick="clearCookies()"
+						class="cursor-pointer text-white ml-5 focus:ring-1 focus:ring-white"
+					/>
 				</div>
 			</div>
 		</nav>

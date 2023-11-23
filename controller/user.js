@@ -5,7 +5,10 @@ const { setUser } = require("../services/auth");
 async function handleUserSignup(req, res) {
 	const { name, email, password } = req.body;
 	const user = await User.create({ name, email, password });
-	res.status(201).render("home");
+	const token = setUser(user);
+	res.cookie("token", token);
+	return res.redirect("/");
+	// return res.status(201).render("home");
 }
 async function handleUserLogin(req, res) {
 	const { email, password } = req.body;
@@ -18,7 +21,8 @@ async function handleUserLogin(req, res) {
 	// const sessionId = uuidv4();
 	const token = setUser(user);
 	res.cookie("token", token);
-	res.redirect("/");
+	return res.redirect("/");
+	// return res.render("home");
 }
 
 module.exports = {
