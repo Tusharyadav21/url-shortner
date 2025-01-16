@@ -2,16 +2,21 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<title>Home Page</title>
 		<script>
 			const clearCookies = () => {
-				document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+				document.cookie =
+					"token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 				window.location.href = "/";
 			};
 			function copyToClipboard(url) {
-				const tempTextarea = document.createElement("textarea");
+				const tempTextarea =
+					document.createElement("textarea");
 				tempTextarea.value = `https://url-short-8.vercel.app/url/${url}`;
 				document.body.appendChild(tempTextarea);
 				tempTextarea.select();
@@ -23,7 +28,9 @@
 	<body>
 		<nav class="bg-gray-800">
 			<div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-				<div class="relative flex h-16 items-center justify-between">
+				<div
+					class="relative flex h-16 items-center justify-between"
+				>
 					<div class="flex items-center pr-2 sm:hidden">
 						<div
 							class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
@@ -41,15 +48,19 @@
 								></path>
 							</svg>
 						</div>
-						<span class="text-white ml-2"><%= locals.userName %></span>
+						<span class="text-white ml-2"
+							><%= locals.userName %></span
+						>
 					</div>
-					<div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+					<div
+						class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
+					>
 						<div class="flex flex-shrink-0 items-center">
-							<img
-								class="h-8 w-auto"
-								src="https://tailwindui.com/img/logos/mark.svg?color=emerald&shade=500"
-								alt="Your Company"
-							/>
+							<h1
+								class="text-center text-2xl font-bold leading-9 tracking-tight text-white"
+							>
+								URL Shortner
+							</h1>
 						</div>
 					</div>
 					<div
@@ -71,7 +82,9 @@
 								></path>
 							</svg>
 						</div>
-						<span class="text-white ml-2"><%= locals.userName %></span>
+						<span class="text-white ml-2"
+							><%= locals.userName %></span
+						>
 					</div>
 					<input
 						type="button"
@@ -83,16 +96,15 @@
 			</div>
 		</nav>
 		<div class="flex flex-col items-center">
-			<h1
-				class="text-2xl font-bold leading-7 mt-5 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight"
-			>
-				URL Shortner
-			</h1>
 			<% if (locals.id) { %>
 			<p>URL Generated:</p>
 			<div class="relative">
-				<a href="/url/<%= id %>" target="_blank">https://url-short-8.vercel.app/url/<%= id %></a
-				>&nbsp;<button class="absolute -right-8 cursor-copy" onclick="copyToClipboard('<%= id %>')">
+				<a href="/url/<%= id %>" target="_blank"
+					>https://url-short-8.vercel.app/url/<%= id %></a
+				>&nbsp;<button
+					class="absolute -right-8 cursor-copy"
+					onclick="copyToClipboard('<%= id %>')"
+				>
 					<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
 					<svg
 						width="24px"
@@ -116,9 +128,15 @@
 			</div>
 			<% } %>
 			<div>
-				<form method="POST" action="/url" class="mt-5 mb-5 w-full">
+				<form
+					method="POST"
+					action="/url"
+					class="mt-5 mb-5 w-full"
+				>
 					<div>
-						<label for="email" class="text-sm font-medium leading-6 text-gray-900"
+						<label
+							for="email"
+							class="text-sm font-medium leading-6 text-gray-900"
 							>Enter Your URL</label
 						>
 						<div class="mt-2">
@@ -144,29 +162,45 @@
 			</div>
 			<div>
 				<% if (locals.urls) { %>
-				<div class="relative overflow-x-auto m-5 outline outline-1 outline-offset-0">
-					<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+				<div
+					class="relative overflow-x-auto m-5 outline outline-1 outline-offset-0"
+				>
+					<table
+						class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+					>
 						<thead
 							class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
 						>
 							<tr>
 								<th scope="col" class="px-6 py-3">#</th>
-								<th scope="col" class="px-6 py-3">Shortened URL</th>
-								<th scope="col" class="px-6 py-3">Redirected</th>
-								<th scope="col" class="px-6 py-3">Clicks</th>
+								<th scope="col" class="px-6 py-3">
+									Shortened URL
+								</th>
+								<th scope="col" class="px-6 py-3">
+									Redirected
+								</th>
+								<th scope="col" class="px-6 py-3">
+									Clicks
+								</th>
 							</tr>
 						</thead>
 						<tbody>
 							<% urls.forEach((url , index) => { %>
-							<tr class="bg-white border-b dark:bg-black-800 dark:border-gray-700">
+							<tr
+								class="bg-white border-b dark:bg-black-800 dark:border-gray-700"
+							>
 								<th
 									scope="row"
 									class="px-6 py-4 font-medium text-black whitespace-nowrap dark:text-black"
 								>
 									<%= index + 1 %>
 								</th>
-								<td class="px-6 py-4 text-black dark:text-black relative">
-									<a href="/url/<%= url.shortId %>"><%= url.shortId %></a>&nbsp;<button
+								<td
+									class="px-6 py-4 text-black dark:text-black relative"
+								>
+									<a href="/url/<%= url.shortId %>"
+										><%= url.shortId %></a
+									>&nbsp;<button
 										class="absolute top-4 cursor-copy"
 										onclick="copyToClipboard('<%= url.shortId %>')"
 									>
@@ -191,10 +225,16 @@
 										</svg>
 									</button>
 								</td>
-								<td class="px-6 py-4 text-black break-all max-w-md dark:text-black">
+								<td
+									class="px-6 py-4 text-black break-all max-w-md dark:text-black"
+								>
 									<%= url.redirectedUrl %>
 								</td>
-								<td class="px-6 py-4 text-black dark:text-black"><%= url.visitHistory.length %></td>
+								<td
+									class="px-6 py-4 text-black dark:text-black"
+								>
+									<%= url.visitHistory.length %>
+								</td>
 							</tr>
 							<% }) %>
 						</tbody>

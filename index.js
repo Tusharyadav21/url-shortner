@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const connectToDatabase = require("./connect");
 const URL = require("./models/url");
+var favicon = require('serve-favicon')
 
 // Routes
 const urlRoute = require("./routes/url");
@@ -21,10 +22,13 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 // Middleware
+// app.use(express.favicon('./views/favicon.ico'));
+app.use(favicon(path.join(__dirname, 'views', 'favicon.ico')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(checkForAuthentication);
+
 
 app.use("/url", restrictTo(["NORMAL", "ADMIN"]), urlRoute);
 app.use("/", staticRoute);
