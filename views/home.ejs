@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 	<head>
 		<meta charset="UTF-8" />
 		<meta
@@ -7,241 +7,235 @@
 			content="width=device-width, initial-scale=1.0"
 		/>
 		<script src="https://cdn.tailwindcss.com"></script>
-		<title>Home Page</title>
+		<title>URL Shortener Dashboard</title>
 		<script>
+			// Clear cookies & logout
 			const clearCookies = () => {
-				document.cookie =
-					"token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-				window.location.href = "/";
+				window.location.href = "/logout";
 			};
-			function copyToClipboard(url) {
-				const tempTextarea =
-					document.createElement("textarea");
-				tempTextarea.value = `https://url-short-8.vercel.app/url/${url}`;
-				document.body.appendChild(tempTextarea);
-				tempTextarea.select();
-				document.execCommand("copy");
-				document.body.removeChild(tempTextarea);
-			}
+
+			// Copy URL to clipboard
+			const copyToClipboard = (url) => {
+				const fullUrl = `${window.location.origin}/url/${url}`;
+				navigator.clipboard.writeText(fullUrl).then(() => {
+					const toast = document.createElement("div");
+					toast.innerText = "✅ Copied!";
+					toast.className =
+						"fixed bottom-6 right-6 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg animate-bounce";
+					document.body.appendChild(toast);
+					setTimeout(() => toast.remove(), 1500);
+				});
+			};
 		</script>
 	</head>
-	<body>
-		<nav class="bg-gray-800">
-			<div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-				<div
-					class="relative flex h-16 items-center justify-between"
-				>
-					<div class="flex items-center pr-2 sm:hidden">
-						<div
-							class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
-						>
-							<svg
-								class="absolute w-12 h-12 text-gray-400 -left-1"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-									clip-rule="evenodd"
-								></path>
-							</svg>
-						</div>
-						<span class="text-white ml-2"
-							><%= locals.userName %></span
-						>
-					</div>
-					<div
-						class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
+
+	<body
+		class="bg-gradient-to-b from-gray-900 to-black text-gray-100 min-h-screen"
+	>
+		<!-- Navbar -->
+		<nav
+			class="bg-gray-900/80 backdrop-blur-md shadow border-b border-gray-800"
+		>
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex justify-between h-16 items-center">
+					<!-- Logo -->
+					<h1
+						class="text-emerald-400 text-2xl font-bold tracking-wide"
 					>
-						<div class="flex flex-shrink-0 items-center">
-							<h1
-								class="text-center text-2xl font-bold leading-9 tracking-tight text-white"
+						🔗 URL Shortener
+					</h1>
+
+					<!-- Profile & Logout -->
+					<div class="flex items-center space-x-4">
+						<div class="flex items-center space-x-2">
+							<div
+								class="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center"
 							>
-								URL Shortner
-							</h1>
-						</div>
-					</div>
-					<div
-						class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 hidden sm:flex"
-					>
-						<div
-							class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
-						>
-							<svg
-								class="absolute w-12 h-12 text-gray-400 -left-1"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg"
+								<svg
+									class="w-6 h-6 text-gray-400"
+									fill="currentColor"
+									viewBox="0 0 20 20"
+								>
+									<path
+										fill-rule="evenodd"
+										d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+										clip-rule="evenodd"
+									></path>
+								</svg>
+							</div>
+							<span class="font-medium"
+								><%= locals.userName %></span
 							>
-								<path
-									fill-rule="evenodd"
-									d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-									clip-rule="evenodd"
-								></path>
-							</svg>
 						</div>
-						<span class="text-white ml-2"
-							><%= locals.userName %></span
+						<button
+							onclick="clearCookies()"
+							class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg text-sm shadow transition-transform hover:scale-105"
 						>
+							Logout
+						</button>
 					</div>
-					<input
-						type="button"
-						value="Logout"
-						onClick="clearCookies()"
-						class="cursor-pointer text-white ml-5 focus:ring-1 focus:ring-white"
-					/>
 				</div>
 			</div>
 		</nav>
-		<div class="flex flex-col items-center">
-			<% if (locals.id) { %>
-			<p>URL Generated:</p>
-			<div class="relative">
-				<a href="/url/<%= id %>" target="_blank"
-					>https://url-short-8.vercel.app/url/<%= id %></a
-				>&nbsp;<button
-					class="absolute -right-8 cursor-copy"
-					onclick="copyToClipboard('<%= id %>')"
+
+		<!-- Main Container -->
+		<div class="max-w-5xl mx-auto py-10 px-4">
+			<!-- URL Generator Card -->
+			<div
+				class="bg-gray-800/70 backdrop-blur-lg border border-gray-700 rounded-2xl shadow-xl p-6 mb-10 animate-fadeIn"
+			>
+				<h2
+					class="text-2xl font-semibold text-emerald-400 mb-4"
 				>
-					<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-					<svg
-						width="24px"
-						height="24px"
-						viewBox="0 0 24 24"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							fill-rule="evenodd"
-							clip-rule="evenodd"
-							d="M21 8C21 6.34315 19.6569 5 18 5H10C8.34315 5 7 6.34315 7 8V20C7 21.6569 8.34315 23 10 23H18C19.6569 23 21 21.6569 21 20V8ZM19 8C19 7.44772 18.5523 7 18 7H10C9.44772 7 9 7.44772 9 8V20C9 20.5523 9.44772 21 10 21H18C18.5523 21 19 20.5523 19 20V8Z"
-							fill="#0F0F0F"
-						/>
-						<path
-							d="M6 3H16C16.5523 3 17 2.55228 17 2C17 1.44772 16.5523 1 16 1H6C4.34315 1 3 2.34315 3 4V18C3 18.5523 3.44772 19 4 19C4.55228 19 5 18.5523 5 18V4C5 3.44772 5.44772 3 6 3Z"
-							fill="#0F0F0F"
-						/>
-					</svg>
-				</button>
-			</div>
-			<% } %>
-			<div>
+					Generate a Short URL
+				</h2>
 				<form
 					method="POST"
 					action="/url"
-					class="mt-5 mb-5 w-full"
+					class="flex flex-col sm:flex-row gap-4"
+				>
+					<input
+						type="url"
+						name="url"
+						id="url"
+						placeholder="Enter your long URL..."
+						class="flex-1 px-4 py-2 rounded-lg border border-gray-700 bg-gray-900/80 text-white shadow-inner focus:ring-2 focus:ring-emerald-500 outline-none transition"
+						required
+					/>
+					<button
+						type="submit"
+						class="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-6 py-2 rounded-lg shadow-lg transition-transform hover:scale-105"
+					>
+						⚡ Shorten
+					</button>
+				</form>
+
+				<!-- Generated URL -->
+				<% if (locals.id) { %>
+				<div
+					class="mt-5 flex justify-between items-center bg-emerald-500/20 border border-emerald-500 rounded-lg p-3"
 				>
 					<div>
-						<label
-							for="email"
-							class="text-sm font-medium leading-6 text-gray-900"
-							>Enter Your URL</label
+						<p class="text-sm text-emerald-300">
+							Short URL generated:
+						</p>
+						<a
+							href="/url/<%= id %>"
+							target="_blank"
+							class="text-lg font-semibold hover:underline text-emerald-400"
 						>
-						<div class="mt-2">
-							<input
-								type="text"
-								id="url"
-								name="url"
-								autocomplete="url"
-								required
-								class="pl-[12px] block min-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-emerald-600 dark:focus:ring-emerald-600 sm:text-sm sm:leading-6 m-auto"
-							/>
-						</div>
+							<%= `${process.env.DOMAIN}/url/${id}` %>
+						</a>
 					</div>
-					<div class="form-group mt-3">
-						<button
-							type="submit"
-							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-emerald-600 dark:hover:bg-emerald-700 focus:outline-none dark:focus:ring-emerald-800"
-						>
-							Generate
-						</button>
-					</div>
-				</form>
+					<button
+						onclick="copyToClipboard('<%= id %>')"
+						class="text-emerald-400 hover:text-emerald-300 text-lg"
+					>
+						📋
+					</button>
+				</div>
+				<% } %>
 			</div>
-			<div>
-				<% if (locals.urls) { %>
+
+			<!-- Dashboard Table -->
+			<% if (locals.urls && urls.length > 0) { %>
+			<div
+				class="bg-gray-800/70 backdrop-blur-lg border border-gray-700 rounded-2xl shadow-xl p-6 animate-fadeIn"
+			>
+				<h2
+					class="text-2xl font-semibold text-blue-400 mb-4"
+				>
+					Your Shortened Links
+				</h2>
 				<div
-					class="relative overflow-x-auto m-5 outline outline-1 outline-offset-0"
+					class="overflow-x-auto rounded-lg border border-gray-700"
 				>
 					<table
-						class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+						class="min-w-full divide-y divide-gray-700"
 					>
-						<thead
-							class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-						>
+						<thead class="bg-gray-900">
 							<tr>
-								<th scope="col" class="px-6 py-3">#</th>
-								<th scope="col" class="px-6 py-3">
-									Shortened URL
+								<th
+									class="px-4 py-3 text-left text-sm font-medium text-gray-300"
+								>
+									#
 								</th>
-								<th scope="col" class="px-6 py-3">
-									Redirected
+								<th
+									class="px-4 py-3 text-left text-sm font-medium text-gray-300"
+								>
+									Short URL
 								</th>
-								<th scope="col" class="px-6 py-3">
+								<th
+									class="px-4 py-3 text-left text-sm font-medium text-gray-300"
+								>
+									Destination
+								</th>
+								<th
+									class="px-4 py-3 text-center text-sm font-medium text-gray-300"
+								>
 									Clicks
 								</th>
 							</tr>
 						</thead>
-						<tbody>
-							<% urls.forEach((url , index) => { %>
-							<tr
-								class="bg-white border-b dark:bg-black-800 dark:border-gray-700"
-							>
-								<th
-									scope="row"
-									class="px-6 py-4 font-medium text-black whitespace-nowrap dark:text-black"
-								>
+						<tbody class="divide-y divide-gray-700">
+							<% urls.forEach((url, index) => { %>
+							<tr class="hover:bg-gray-700/50 transition">
+								<td class="px-4 py-3 text-sm">
 									<%= index + 1 %>
-								</th>
+								</td>
 								<td
-									class="px-6 py-4 text-black dark:text-black relative"
+									class="px-4 py-3 text-sm text-emerald-400"
 								>
-									<a href="/url/<%= url.shortId %>"
+									<a
+										href="/url/<%= url.shortId %>"
+										class="hover:underline"
 										><%= url.shortId %></a
-									>&nbsp;<button
-										class="absolute top-4 cursor-copy"
-										onclick="copyToClipboard('<%= url.shortId %>')"
 									>
-										<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-										<svg
-											width="24px"
-											height="24px"
-											viewBox="0 0 24 24"
-											fill="none"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												fill-rule="evenodd"
-												clip-rule="evenodd"
-												d="M21 8C21 6.34315 19.6569 5 18 5H10C8.34315 5 7 6.34315 7 8V20C7 21.6569 8.34315 23 10 23H18C19.6569 23 21 21.6569 21 20V8ZM19 8C19 7.44772 18.5523 7 18 7H10C9.44772 7 9 7.44772 9 8V20C9 20.5523 9.44772 21 10 21H18C18.5523 21 19 20.5523 19 20V8Z"
-												fill="#0F0F0F"
-											/>
-											<path
-												d="M6 3H16C16.5523 3 17 2.55228 17 2C17 1.44772 16.5523 1 16 1H6C4.34315 1 3 2.34315 3 4V18C3 18.5523 3.44772 19 4 19C4.55228 19 5 18.5523 5 18V4C5 3.44772 5.44772 3 6 3Z"
-												fill="#0F0F0F"
-											/>
-										</svg>
+									<button
+										onclick="copyToClipboard('<%= url.shortId %>')"
+										class="ml-2 text-gray-400 hover:text-emerald-300"
+									>
+										📋
 									</button>
 								</td>
 								<td
-									class="px-6 py-4 text-black break-all max-w-md dark:text-black"
+									class="px-4 py-3 text-sm text-gray-300 break-words max-w-md"
 								>
 									<%= url.redirectedUrl %>
 								</td>
 								<td
-									class="px-6 py-4 text-black dark:text-black"
+									class="px-4 py-3 text-sm text-center text-blue-400 font-semibold"
 								>
 									<%= url.visitHistory.length %>
 								</td>
 							</tr>
-							<% }) %>
+							<% }); %>
 						</tbody>
 					</table>
 				</div>
-				<% } %>
 			</div>
+			<% } else { %>
+			<p class="text-center mt-6 text-gray-400 italic">
+				✨ No URLs yet! Start by shortening one above.
+			</p>
+			<% } %>
 		</div>
+
+		<!-- Animation Styles -->
+		<style>
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+					transform: translateY(10px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+			.animate-fadeIn {
+				animation: fadeIn 0.5s ease-in-out;
+			}
+		</style>
 	</body>
 </html>

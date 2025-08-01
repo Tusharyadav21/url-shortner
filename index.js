@@ -3,35 +3,48 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const connectToDatabase = require("./connect");
 const URL = require("./models/url");
-var favicon = require('serve-favicon')
+var favicon = require("serve-favicon");
 
 // Routes
 const urlRoute = require("./routes/url");
 const staticRoute = require("./routes/staticRouter");
 const userRoute = require("./routes/user");
-const { checkForAuthentication, restrictTo } = require("./middlewares/auth");
+const {
+	checkForAuthentication,
+	restrictTo,
+} = require("./middlewares/auth");
 
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 8001;
 
-connectToDatabase().then(() => console.log("DB Connected"));
+(async () => {
+	await connectToDatabase();
+	app.listen(process.env.PORT, () => {
+		console.log(
+			`🚀 Server running on port ${process.env.PORT}`
+		);
+	});
+})();
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 // Middleware
 // app.use(express.favicon('./views/favicon.ico'));
-app.use(favicon(path.join(__dirname, 'views', 'favicon.ico')));
+app.use(
+	favicon(path.join(__dirname, "views", "favicon.ico"))
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(checkForAuthentication);
 
-
-app.use("/url", restrictTo(["NORMAL", "ADMIN"]), urlRoute);
+app.use("/url", restrictTo(["USER", "ADMIN"]), urlRoute);
 app.use("/", staticRoute);
 app.use("/user", userRoute);
 
-app.listen(PORT, () => console.log(`Server Started at PORT: ${PORT}`));
+app.listen(PORT, () =>
+	console.log(`Server Started at PORT: ${PORT}`)
+);
