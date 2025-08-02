@@ -1,5 +1,6 @@
-const { getUser } = require("../services/auth");
-require("dotenv").config();
+import { getUser } from "../services/auth.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 /**
  * Authentication Middleware
@@ -7,7 +8,7 @@ require("dotenv").config();
  * - Cookie-based auth (Web)
  * - Bearer Token in Authorization header (Mobile/SPA)
  */
-function checkForAuthentication(req, res, next) {
+export function checkForAuthentication(req, res, next) {
 	try {
 		let token = null;
 
@@ -48,7 +49,7 @@ function checkForAuthentication(req, res, next) {
  * Restricts access based on user roles
  * @param {string[]} roles - Array of allowed roles e.g. ["ADMIN", "USER"]
  */
-function restrictTo(roles = []) {
+export function restrictTo(roles = []) {
 	return (req, res, next) => {
 		try {
 			if (!req.user) {
@@ -77,8 +78,3 @@ function restrictTo(roles = []) {
 		}
 	};
 }
-
-module.exports = {
-	checkForAuthentication,
-	restrictTo,
-};

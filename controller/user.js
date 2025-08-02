@@ -1,18 +1,18 @@
-const User = require("../models/user");
-const { setUser } = require("../services/auth");
+import URL from "../models/user.js";
+import { setUser } from "../services/auth.js";
 
-async function handleUserSignup(req, res) {
+export async function handleUserSignup(req, res) {
 	try {
 		const { name, email, password } = req.body;
 
-		const existingUser = await User.findOne({ email });
+		const existingUser = await URL.findOne({ email });
 		if (existingUser) {
 			return res.render("signup", {
 				error: "Email is already registered",
 			});
 		}
 
-		const user = await User.create({
+		const user = await URL.create({
 			name,
 			email,
 			password,
@@ -36,11 +36,11 @@ async function handleUserSignup(req, res) {
 	}
 }
 
-async function handleUserLogin(req, res) {
+export async function handleUserLogin(req, res) {
 	try {
 		const { email, password } = req.body;
 
-		const user = await User.findOne({ email }).select(
+		const user = await URL.findOne({ email }).select(
 			"+password"
 		);
 		if (!user) {
@@ -89,7 +89,3 @@ async function handleUserLogin(req, res) {
 			.render("login", { error: "Internal Server Error" });
 	}
 }
-module.exports = {
-	handleUserSignup,
-	handleUserLogin,
-};

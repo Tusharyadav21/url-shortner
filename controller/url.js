@@ -1,25 +1,22 @@
-const { nanoid } = require("nanoid");
-const validator = require("validator");
-const URL = require("../models/url");
+import { nanoid } from "nanoid";
+import validator from "validator";
+const { isURL } = validator;
 
-// ✅ Rate limit config (Max 10 URL creations per 10 min per user)
+import URL from "../models/url.js";
+
+// Rate limit config (Max 10 URL creations per 10 min per user)
 const MAX_URLS_PER_WINDOW = 10;
 const WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
-async function handleGenerateNewShortURL(req, res) {
+export async function handleGenerateNewShortURL(req, res) {
 	try {
 		const { url } = req.body;
 
 		// 1️⃣ Validate URL input
-		if (
-			!url ||
-			!validator.isURL(url, { require_protocol: true })
-		) {
-			return res
-				.status(400)
-				.render("home", {
-					error: "Invalid or missing URL",
-				});
+		if (!url || !isURL(url, { require_protocol: true })) {
+			return res.status(400).render("home", {
+				error: "Invalid or missing URL",
+			});
 		}
 
 		// 2️⃣ Rate limiting: Count URLs created by this user in last 10 min
@@ -75,7 +72,7 @@ async function handleGenerateNewShortURL(req, res) {
 	}
 }
 
-async function handleGetURLFromId(req, res) {
+export async function handleGetURLFromId(req, res) {
 	try {
 		const shortId = req.params.shortid || req.params.id;
 
@@ -102,7 +99,7 @@ async function handleGetURLFromId(req, res) {
 	}
 }
 
-async function handleGetURLAnalytics(req, res) {
+export async function handleGetURLAnalytics(req, res) {
 	try {
 		const shortId = req.params.shortid;
 		const result = await URL.findOne({ shortId }).lean();
@@ -124,9 +121,3 @@ async function handleGetURLAnalytics(req, res) {
 			.json({ error: "Internal Server Error" });
 	}
 }
-
-module.exports = {
-	handleGenerateNewShortURL,
-	handleGetURLAnalytics,
-	handleGetURLFromId,
-};

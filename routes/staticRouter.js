@@ -1,8 +1,8 @@
-const express = require("express");
-const URL = require("../models/url");
-const { restrictTo } = require("../middlewares/auth");
+import { Router } from "express";
+import URL from "../models/url.js";
+import { restrictTo } from "../middlewares/auth.js";
 
-const router = express.Router();
+const router = Router();
 
 /**
  * Dashboard: User URLs (Protected)
@@ -88,4 +88,4 @@ router.get(
 	}
 );
 
-module.exports = router;
+export default router;

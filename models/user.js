@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+import { Schema, model } from "mongoose";
+import { hash, compare } from "bcrypt";
 
 const LOCK_TIME = 30 * 60 * 1000;
 const MAX_LOGIN_ATTEMPTS = 5;
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
 	{
 		name: {
 			type: String,
@@ -56,7 +56,7 @@ userSchema.virtual("isLocked").get(function () {
 // Pre-save hook: Hash password if modified
 userSchema.pre("save", async function (next) {
 	if (!this.isModified("password")) return next();
-	this.password = await bcrypt.hash(this.password, 10);
+	this.password = await hash(this.password, 10);
 	next();
 });
 
@@ -64,7 +64,7 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.comparePassword = async function (
 	candidatePassword
 ) {
-	return bcrypt.compare(candidatePassword, this.password);
+	return compare(candidatePassword, this.password);
 };
 
 // Instance method: Increment login attempts & lock if needed
@@ -108,5 +108,5 @@ userSchema.virtual("publicProfile").get(function () {
 	};
 });
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+const User = model("User", userSchema);
+export default User;

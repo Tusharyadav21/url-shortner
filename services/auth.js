@@ -1,14 +1,17 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+import jwt from "jsonwebtoken";
+const { sign, verify } = jwt;
+
+import dotenv from "dotenv";
+dotenv.config();
 
 const key = process.env.SECRET_KEY;
 
 /**
- * ✅ Generate JWT for a user
+ * Generate JWT for a user
  * Includes expiration & secure claims.
  */
-function setUser(user) {
-	return jwt.sign(
+export function setUser(user) {
+	return sign(
 		{
 			_id: user.id,
 			email: user.email,
@@ -16,19 +19,19 @@ function setUser(user) {
 			name: user.name,
 		},
 		key,
-		{ expiresIn: "1h" } // ✅ Token expires in 1 hour (adjust as needed)
+		{ expiresIn: "1h" } // Token expires in 1 hour (adjust as needed)
 	);
 }
 
 /**
- * ✅ Verify JWT safely
+ * Verify JWT safely
  * Returns user payload or null if invalid/expired.
  */
-function getUser(token) {
+export function getUser(token) {
 	if (!token) return null;
 
 	try {
-		return jwt.verify(token, key);
+		return verify(token, key);
 	} catch (err) {
 		if (err.name === "TokenExpiredError") {
 			console.warn(
@@ -45,8 +48,3 @@ function getUser(token) {
 		return null;
 	}
 }
-
-module.exports = {
-	setUser,
-	getUser,
-};

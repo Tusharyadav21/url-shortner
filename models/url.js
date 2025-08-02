@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const urlSchema = new mongoose.Schema(
+const urlSchema = new Schema(
 	{
 		shortId: {
 			type: String,
@@ -27,7 +27,7 @@ const urlSchema = new mongoose.Schema(
 			},
 		],
 		createdBy: {
-			type: mongoose.Schema.Types.ObjectId,
+			type: Schema.Types.ObjectId,
 			ref: "users",
 			index: true,
 			required: true,
@@ -92,6 +92,6 @@ urlSchema.pre("remove", async function (next) {
 	next();
 });
 
-const URL = mongoose.model("Url", urlSchema);
+const URL = model("Url", urlSchema);
 
-module.exports = URL;
+export default URL;

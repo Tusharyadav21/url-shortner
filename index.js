@@ -1,21 +1,25 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const path = require("path");
-const connectToDatabase = require("./connect");
-const URL = require("./models/url");
-var favicon = require("serve-favicon");
+import express, { json, urlencoded } from "express";
+import cookieParser from "cookie-parser";
+import path, { resolve, join } from "path";
+import connectToDatabase from "./connect.js";
+import favicon from "serve-favicon";
 
 // Routes
-const urlRoute = require("./routes/url");
-const staticRoute = require("./routes/staticRouter");
-const userRoute = require("./routes/user");
-const {
+import urlRoute from "./routes/url.js";
+import staticRoute from "./routes/staticRouter.js";
+import userRoute from "./routes/user.js";
+import {
 	checkForAuthentication,
 	restrictTo,
-} = require("./middlewares/auth");
+} from "./middlewares/auth.js";
 
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 8001;
 
@@ -29,15 +33,13 @@ const PORT = process.env.PORT || 8001;
 })();
 
 app.set("view engine", "ejs");
-app.set("views", path.resolve("./views"));
+app.set("views", resolve("./views"));
 
 // Middleware
 // app.use(express.favicon('./views/favicon.ico'));
-app.use(
-	favicon(path.join(__dirname, "views", "favicon.ico"))
-);
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(favicon(join(__dirname, "views", "favicon.ico")));
+app.use(json());
+app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(checkForAuthentication);
 

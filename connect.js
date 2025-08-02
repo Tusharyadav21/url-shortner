@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
+const { connect: _connect, connection } = mongoose;
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 5000; // 5 seconds
@@ -8,17 +10,15 @@ async function connectToDatabase() {
 
 	const connect = async () => {
 		try {
-			await mongoose.connect(process.env.MONGODB_URI, {
-				useNewUrlParser: true,
-				useUnifiedTopology: true,
-				maxPoolSize: 20, // Connection pooling
-				serverSelectionTimeoutMS: 5000, // Fail fast if DB is down
-				socketTimeoutMS: 45000, // Close idle sockets
-				family: 4, // Force IPv4 for consistency
+			await _connect(process.env.MONGODB_URI, {
+				maxPoolSize: 20,
+				serverSelectionTimeoutMS: 5000,
+				socketTimeoutMS: 45000,
+				family: 4,
 			});
 
 			console.log(
-				`MongoDB connected: ${mongoose.connection.host}`
+				`✅ MongoDB connected: ${connection.host}`
 			);
 		} catch (err) {
 			attempts++;
@@ -37,7 +37,7 @@ async function connectToDatabase() {
 				return connect();
 			} else {
 				console.error("🚨 Max retries reached. Exiting...");
-				process.exit(1); // Exit if DB is unreachable after retries
+				process.exit(1);
 			}
 		}
 	};
@@ -45,7 +45,7 @@ async function connectToDatabase() {
 	await connect();
 
 	// Handle unexpected disconnections
-	mongoose.connection.on("disconnected", () => {
+	connection.on("disconnected", () => {
 		console.warn(
 			"⚠️ MongoDB disconnected! Attempting reconnect..."
 		);
@@ -53,18 +53,18 @@ async function connectToDatabase() {
 	});
 
 	// Log connection errors
-	mongoose.connection.on("error", (err) => {
+	connection.on("error", (err) => {
 		console.error("❌ MongoDB error:", err);
 	});
 
 	// Graceful shutdown on process exit
 	process.on("SIGINT", async () => {
 		console.log("🔻 Closing MongoDB connection...");
-		await mongoose.connection.close();
+		await connection.close();
 		process.exit(0);
 	});
 
-	return mongoose.connection;
+	return connection;
 }
 
-module.exports = connectToDatabase;
+export default connectToDatabase;
