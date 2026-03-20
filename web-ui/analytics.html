@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics - URL Shortener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="./app.js"></script>
+    <style>
+      body {
+        font-family: "Sora", sans-serif;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-[radial-gradient(circle_at_top,_#4c0519,_#020617)] text-white">
+    <main class="max-w-2xl mx-auto px-6 py-16">
+      <nav class="flex items-center justify-between text-sm text-rose-200">
+        <a href="./index.html">Home</a>
+        <div class="flex gap-4">
+          <a href="./create.html" class="hover:text-white">Create URL</a>
+          <a href="./login.html" class="hover:text-white">Login</a>
+        </div>
+      </nav>
+
+      <div class="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8">
+        <p class="text-xs uppercase tracking-[0.3em] text-rose-200">Analytics Service</p>
+        <h1 class="mt-4 text-3xl font-semibold">Analytics</h1>
+        <p class="mt-2 text-sm text-slate-300">Fetch analytics for a short ID.</p>
+
+        <form id="analyticsForm" class="mt-8 space-y-4">
+          <input
+            type="text"
+            name="shortId"
+            placeholder="Short ID (e.g. a1B2c3D4)"
+            required
+            class="w-full rounded-2xl bg-white/10 border border-white/10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-400"
+          />
+          <button
+            type="submit"
+            class="w-full rounded-2xl bg-rose-200 text-slate-900 font-semibold py-3 hover:bg-rose-100 transition"
+          >
+            Fetch Analytics
+          </button>
+        </form>
+
+        <div id="result" class="mt-6 hidden rounded-2xl border border-white/10 bg-white/10 p-4">
+          <p class="text-sm text-slate-300">Total Clicks</p>
+          <p id="totalClicks" class="text-3xl font-semibold mt-1"></p>
+          <div class="mt-4">
+            <h3 class="text-xs uppercase text-slate-400 tracking-[0.2em]">Daily</h3>
+            <div id="dailyList" class="mt-2 space-y-2"></div>
+          </div>
+        </div>
+
+        <p id="status" class="mt-4 text-sm"></p>
+      </div>
+    </main>
+
+    <script>
+      const form = document.getElementById("analyticsForm");
+      const status = document.getElementById("status");
+      const result = document.getElementById("result");
+      const totalClicks = document.getElementById("totalClicks");
+      const dailyList = document.getElementById("dailyList");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "";
+        result.classList.add("hidden");
+        dailyList.innerHTML = "";
+        const formData = new FormData(form);
+        const shortId = formData.get("shortId");
+
+        try {
+          const data = await App.getJson(`${App.API_BASE.analytics}/analytics/url/${shortId}`);
+          totalClicks.textContent = data.total_clicks;
+          if (data.daily.length === 0) {
+            dailyList.innerHTML = "<p class=\"text-sm text-slate-400\">No daily metrics yet.</p>";
+          } else {
+            data.daily.forEach((row) => {
+              const item = document.createElement("div");
+              item.className = "flex items-center justify-between rounded-lg bg-white/5 px-3 py-2";
+              item.innerHTML = `<span class=\"mono text-sm\">${row.date}</span><span class=\"text-sm\">${row.total_clicks}</span>`;
+              dailyList.appendChild(item);
+            });
+          }
+          result.classList.remove("hidden");
+          App.setStatus(status, "Analytics loaded.");
+        } catch (err) {
+          App.setStatus(status, err.message, "error");
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "URL Shortener Microservices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "auth_url", "value": "http://localhost:8000"},
+    {"key": "url_url", "value": "http://localhost:8000"},
+    {"key": "analytics_url", "value": "http://localhost:8000"},
+    {"key": "access_token", "value": ""},
+    {"key": "refresh_token", "value": ""},
+    {"key": "short_id", "value": ""}
+  ],
+  "item": [
+    {
+      "name": "Auth Signup",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": {"raw": "{{auth_url}}/auth/signup", "host": ["{{auth_url}}"], "path": ["auth", "signup"]},
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"secret123\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.collectionVariables.set('access_token', json.access_token);",
+              "pm.collectionVariables.set('refresh_token', json.refresh_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth Login",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": {"raw": "{{auth_url}}/auth/login", "host": ["{{auth_url}}"], "path": ["auth", "login"]},
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"secret123\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.collectionVariables.set('access_token', json.access_token);",
+              "pm.collectionVariables.set('refresh_token', json.refresh_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth Refresh",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": {"raw": "{{auth_url}}/auth/refresh", "host": ["{{auth_url}}"], "path": ["auth", "refresh"]},
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.collectionVariables.set('access_token', json.access_token);",
+              "pm.collectionVariables.set('refresh_token', json.refresh_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "url": {"raw": "{{url_url}}/url", "host": ["{{url_url}}"], "path": ["url"]},
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://example.com\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.collectionVariables.set('short_id', json.short_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Redirect",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "{{url_url}}/url/{{short_id}}", "host": ["{{url_url}}"], "path": ["url", "{{short_id}}"]}
+      }
+    },
+    {
+      "name": "Analytics",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "{{analytics_url}}/analytics/url/{{short_id}}", "host": ["{{analytics_url}}"], "path": ["analytics", "url", "{{short_id}}"]}
+      }
+    }
+  ]
+}

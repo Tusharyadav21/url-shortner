@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - URL Shortener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="./app.js"></script>
+    <style>
+      body {
+        font-family: "Sora", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-[radial-gradient(circle_at_top,_#083344,_#020617)] text-white">
+    <main class="max-w-xl mx-auto px-6 py-16">
+      <nav class="flex items-center justify-between text-sm text-cyan-200">
+        <a href="./index.html">Home</a>
+        <div class="flex gap-4">
+          <a href="./signup.html" class="hover:text-white">Signup</a>
+          <a href="./create.html" class="hover:text-white">Create URL</a>
+        </div>
+      </nav>
+
+      <div class="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8">
+        <p class="text-xs uppercase tracking-[0.3em] text-cyan-200">Auth Service</p>
+        <h1 class="mt-4 text-3xl font-semibold">Welcome back</h1>
+        <p class="mt-2 text-sm text-slate-300">Login to fetch a fresh access token.</p>
+
+        <form id="loginForm" class="mt-8 space-y-4">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+            class="w-full rounded-2xl bg-white/10 border border-white/10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+            class="w-full rounded-2xl bg-white/10 border border-white/10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          />
+          <button
+            type="submit"
+            class="w-full rounded-2xl bg-cyan-200 text-slate-900 font-semibold py-3 hover:bg-cyan-100 transition"
+          >
+            Login
+          </button>
+        </form>
+
+        <p id="status" class="mt-4 text-sm"></p>
+      </div>
+    </main>
+
+    <script>
+      const form = document.getElementById("loginForm");
+      const status = document.getElementById("status");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "";
+        const formData = new FormData(form);
+        const payload = {
+          email: formData.get("email"),
+          password: formData.get("password"),
+        };
+
+        try {
+          const data = await App.postJson(`${App.API_BASE.auth}/auth/login`, payload);
+          App.setToken(data.access_token);
+          App.setStatus(status, "Login successful. Token saved.");
+        } catch (err) {
+          App.setStatus(status, err.message, "error");
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Short URL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="./app.js"></script>
+    <style>
+      body {
+        font-family: "Sora", sans-serif;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-[radial-gradient(circle_at_top,_#064e3b,_#020617)] text-white">
+    <main class="max-w-2xl mx-auto px-6 py-16">
+      <nav class="flex items-center justify-between text-sm text-emerald-200">
+        <a href="./index.html">Home</a>
+        <div class="flex gap-4">
+          <a href="./signup.html" class="hover:text-white">Signup</a>
+          <a href="./analytics.html" class="hover:text-white">Analytics</a>
+        </div>
+      </nav>
+
+      <div class="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8">
+        <p class="text-xs uppercase tracking-[0.3em] text-emerald-200">URL Service</p>
+        <h1 class="mt-4 text-3xl font-semibold">Create a short URL</h1>
+        <p class="mt-2 text-sm text-slate-300">Requires a valid access token.</p>
+
+        <form id="createForm" class="mt-8 space-y-4">
+          <input
+            type="url"
+            name="url"
+            placeholder="https://example.com"
+            required
+            class="w-full rounded-2xl bg-white/10 border border-white/10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          />
+          <button
+            type="submit"
+            class="w-full rounded-2xl bg-emerald-200 text-slate-900 font-semibold py-3 hover:bg-emerald-100 transition"
+          >
+            Generate
+          </button>
+        </form>
+
+        <div id="result" class="mt-6 hidden rounded-2xl border border-white/10 bg-white/10 p-4">
+          <p class="text-sm text-slate-300">Short URL</p>
+          <a id="shortUrl" class="mono text-emerald-200 text-lg" href="#" target="_blank"></a>
+          <button
+            id="copyBtn"
+            class="mt-3 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition"
+          >
+            Copy
+          </button>
+        </div>
+
+        <p id="status" class="mt-4 text-sm"></p>
+      </div>
+    </main>
+
+    <script>
+      const form = document.getElementById("createForm");
+      const status = document.getElementById("status");
+      const result = document.getElementById("result");
+      const shortUrl = document.getElementById("shortUrl");
+      const copyBtn = document.getElementById("copyBtn");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "";
+        result.classList.add("hidden");
+        const token = App.getToken();
+        if (!token) {
+          App.setStatus(status, "No access token found. Login or signup first.", "error");
+          return;
+        }
+        const formData = new FormData(form);
+        const payload = { url: formData.get("url") };
+
+        try {
+          const data = await App.postJson(`${App.API_BASE.url}/url`, payload, token);
+          const url = `${App.API_BASE.url}/url/${data.short_id}`;
+          shortUrl.textContent = url;
+          shortUrl.href = url;
+          result.classList.remove("hidden");
+          App.setStatus(status, "Short URL created.");
+        } catch (err) {
+          App.setStatus(status, err.message, "error");
+        }
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        if (!shortUrl.textContent) return;
+        await navigator.clipboard.writeText(shortUrl.textContent);
+        App.setStatus(status, "Copied to clipboard.");
+      });
+    </script>
+  </body>
+</html>
